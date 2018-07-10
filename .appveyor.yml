@@ -1,3 +1,6 @@
+image:
+- Visual Studio 2017
+
 configuration:
   - Release
 
@@ -8,8 +11,8 @@ platform:
 before_build:
   - cmd: git -C .. clone -q https://github.com/MediaArea/zlib.git
   - ps: >-
-      $Env:PATH += ";C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/bin";
-      $Env:PATH += ";C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/bin/x86_amd64";
+      $Env:PATH += ";" + (Get-ChildItem "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\*\bin\HostX64\x86")[0].FullName;
+      $Env:PATH += ";" + (Get-ChildItem "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\*\bin\HostX64\x64")[0].FullName;
       If ($Env:PLATFORM -Eq "Win32") {
         Push-Location ..\zlib\contrib\masmx86
         ml /nologo /coff /safeseh /Zi /c /Flmatch686.lst match686.asm
@@ -22,6 +25,14 @@ before_build:
         Pop-Location
       }
 
-build:
-  project: Project\MSVC2015\ZenLib_MSVC.sln
-  verbosity: quiet
+build_script:
+  - cmd: >|
+    set VSCMD_START_DIR=%CD%
+    call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
+     if %PLATFORM% == "Win32" (
+       MSbuid /verbosity:quiet /p:Configuration=Release;Platform=Win32 Project\MSVC2017\ZenLib_MSVC.sln
+       MSbuid /verbosity:quiet /p:Configuration=Release;Platform=Win32 Project\MSVC2017\ZenLib_UWP.sln
+     ) else (
+       MSbuid /verbosity:quiet /p:Configuration=Release;Platform=x64 Project\MSVC2017\ZenLib_MSVC.sln
+       MSbuid /verbosity:quiet /p:Configuration=Release;Platform=x64 Project\MSVC2017\ZenLib_UWP.sln
+     )
