@@ -1,8 +1,8 @@
 #!/bin/sh
 
 #libtoolize 
-if test "$(uname)" = "Darwin" ; then
-  #Darwin based Systems like Mac OS X: libtoolize is called glibtoolize.
+if ! command -v glibtoolize &>/dev/null 2>&1 ; then
+  #Old Darwin based Systems like Mac OS X: libtoolize is called glibtoolize.
   glibtoolize --automake
 else
   libtoolize --automake
