@@ -39,7 +39,6 @@
                          #endif
                         #include <fcntl.h>
                         #include <sys/syscall.h>
-                        #include <linux/stat.h>
                     #endif
                 #endif
             #endif
